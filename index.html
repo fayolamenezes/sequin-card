@@ -35,15 +35,15 @@
       position: absolute;
       width: 100%;
       height: 100%;
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+      border-radius: 0; /* Removed border radius */
+      box-shadow: none; /* Removed box shadow */
       overflow: hidden;
       display: flex;
       justify-content: center;
       align-items: center;
       transform-style: preserve-3d;
       opacity: 0;
-      background: white;
+      background: #000; /* Changed to black */
     }
 
     .card img {
@@ -164,16 +164,13 @@
   cards.forEach((card, i) => {
     const isLast = card.classList.contains("last");
     const entryLabel = `card${i}-entry`;
-    const tiltLabel = `card${i}-tilt`;
 
-    // Add a label for when the card enters
     tl.addLabel(entryLabel);
 
-    // Card enters
     tl.fromTo(card,
       {
         yPercent: 100,
-        scale: 0.9,
+        scale: isLast ? 0.9 : 1.1,
         rotateZ: 0,
         opacity: 0
       },
@@ -189,14 +186,13 @@
       entryLabel
     );
 
-    // Schedule the *previous* card's tilt to happen as this one starts entering
     if (i > 0) {
       const prevCard = cards[i - 1];
       tl.to(prevCard, {
         rotateZ: finalTilt[i - 1],
         duration: 0.5,
         ease: "power1.out"
-      }, entryLabel); // <- start simultaneously
+      }, entryLabel);
     }
   });
 </script>
