@@ -16,6 +16,11 @@
       overflow-x: hidden;
     }
 
+    .spacer {
+      height: 50vh; /* Shows first card half */
+      background: #000;
+    }
+
     .section {
       height: 100vh;
       width: 100%;
@@ -35,15 +40,14 @@
       position: absolute;
       width: 100%;
       height: 100%;
-      border-radius: 0; /* Removed border radius */
-      box-shadow: none; /* Removed box shadow */
+      border-radius: 0;
+      box-shadow: none;
       overflow: hidden;
       display: flex;
       justify-content: center;
       align-items: center;
       transform-style: preserve-3d;
-      opacity: 0;
-      background: #000; /* Changed to black */
+      background: #000;
     }
 
     .card img {
@@ -51,11 +55,12 @@
       height: auto;
     }
 
-    .last {
+    .card.last {
       background: #eee;
       flex-direction: column;
       padding: 20px;
       text-align: center;
+      color: #000;
     }
 
     .text-block-2 {
@@ -112,6 +117,8 @@
 </head>
 <body>
 
+<div class="spacer"></div>
+
 <section class="section" id="card-section">
   <div class="card-container">
     <div class="card one">
@@ -140,7 +147,6 @@
   </div>
 </section>
 
-<!-- GSAP + ScrollTrigger -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
@@ -148,8 +154,19 @@
   gsap.registerPlugin(ScrollTrigger);
 
   const cards = document.querySelectorAll('.card');
-  const entryTilt = [6, -6, 6, 0];  
-  const finalTilt = [12, -12, 16, 0]; 
+  const entryTilt = [6, -6, 6, 0];
+  const finalTilt = [12, -12, 16, 0];
+
+  // Set initial states before ScrollTrigger
+  gsap.set(cards, { opacity: 0, yPercent: 100, scale: 1 });
+
+  // Show first card partially before scroll trigger starts
+  gsap.set(cards[0], {
+    yPercent: 50,
+    scale: 1.1,
+    opacity: 1,
+    zIndex: 10
+  });
 
   const tl = gsap.timeline({
     scrollTrigger: {
@@ -167,24 +184,15 @@
 
     tl.addLabel(entryLabel);
 
-    tl.fromTo(card,
-      {
-        yPercent: 100,
-        scale: isLast ? 0.9 : 1.1,
-        rotateZ: 0,
-        opacity: 0
-      },
-      {
-        yPercent: 0,
-        scale: isLast ? 1 : 1.05,
-        rotateZ: isLast ? 0 : entryTilt[i],
-        opacity: 1,
-        duration: 0.6,
-        ease: "power1.out",
-        onStart: () => card.style.zIndex = 10 + i
-      },
-      entryLabel
-    );
+    tl.to(card, {
+      yPercent: 0,
+      scale: isLast ? 1 : 1.05,
+      rotateZ: isLast ? 0 : entryTilt[i],
+      opacity: 1,
+      duration: 0.6,
+      ease: "power1.out",
+      onStart: () => card.style.zIndex = 10 + i
+    }, entryLabel);
 
     if (i > 0) {
       const prevCard = cards[i - 1];
