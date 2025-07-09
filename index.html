@@ -154,25 +154,21 @@
   gsap.registerPlugin(ScrollTrigger);
 
   const cards = document.querySelectorAll('.card');
-  const entryTilt = [6, -6, 6, 0];
-  const finalTilt = [12, -12, 16, 0];
+  const entryTilt = [9, -8, 6, 0];
+  const finalTilt = [18, -16, 10, 0];
 
-  // Set initial states before ScrollTrigger
-  gsap.set(cards, { opacity: 0, yPercent: 100, scale: 1 });
-
-  // Show first card partially before scroll trigger starts
-  gsap.set(cards[0], {
-    yPercent: 50,
-    scale: 1.1,
-    opacity: 1,
-    zIndex: 10
+  // Initial state: cards stacked below viewport, scaled up
+  gsap.set(cards, {
+    yPercent: 170,
+    scale: 1.5,
+    opacity: 1
   });
 
   const tl = gsap.timeline({
     scrollTrigger: {
       trigger: "#card-section",
       start: "top top",
-      end: "+=3000",
+      end: "+=5000",
       scrub: true,
       pin: true,
     }
@@ -186,11 +182,10 @@
 
     tl.to(card, {
       yPercent: 0,
-      scale: isLast ? 1 : 1.05,
+      scale: isLast ? 1 : 1.1,
       rotateZ: isLast ? 0 : entryTilt[i],
-      opacity: 1,
-      duration: 0.6,
-      ease: "power1.out",
+      duration: 0.7,
+      ease: "power2.out",
       onStart: () => card.style.zIndex = 10 + i
     }, entryLabel);
 
@@ -199,7 +194,7 @@
       tl.to(prevCard, {
         rotateZ: finalTilt[i - 1],
         duration: 0.5,
-        ease: "power1.out"
+        ease: "power2.out"
       }, entryLabel);
     }
   });
