@@ -154,50 +154,58 @@
   gsap.registerPlugin(ScrollTrigger);
 
   const cards = document.querySelectorAll('.card');
-  const entryTilt = [9, -8, 6, 0];
+  const entryTilt = [11, -10, 7, 0];
   const finalTilt = [18, -16, 10, 0];
 
-  // Initial state: cards stacked below viewport, scaled up
+  // Initial setup: Cards stacked offscreen with subtle tilt and scale
   gsap.set(cards, {
     yPercent: 170,
     scale: 1.5,
-    opacity: 1
+    rotateZ: 0,
+    opacity: 1,
+    z: 0
   });
 
   const tl = gsap.timeline({
     scrollTrigger: {
       trigger: "#card-section",
       start: "top top",
-      end: "+=5000",
-      scrub: true,
+      end: "+=4500",
+      scrub: 1,
       pin: true,
+      anticipatePin: 1,
     }
   });
 
-  cards.forEach((card, i) => {
-    const isLast = card.classList.contains("last");
-    const entryLabel = `card${i}-entry`;
+cards.forEach((card, i) => {
+  const isLast = card.classList.contains("last");
+  const entryLabel = `card${i}-entry`;
 
-    tl.addLabel(entryLabel);
+  tl.addLabel(entryLabel);
 
-    tl.to(card, {
-      yPercent: 0,
-      scale: isLast ? 1 : 1.1,
-      rotateZ: isLast ? 0 : entryTilt[i],
-      duration: 0.7,
-      ease: "power2.out",
-      onStart: () => card.style.zIndex = 10 + i
-    }, entryLabel);
+  // Animate current card in slightly AFTER previous card starts tilting
+  tl.to(card, {
+    yPercent: 0,
+    scale: 1,
+    rotateZ: isLast ? 0 : entryTilt[i],
+    z: i * 10,
+    duration: 1,
+    ease: "expo.out",
+    onStart: () => card.style.zIndex = 20 + i
+  }, i === 0 ? entryLabel : `>-0.4`); // Starts before previous finishes
 
-    if (i > 0) {
-      const prevCard = cards[i - 1];
-      tl.to(prevCard, {
-        rotateZ: finalTilt[i - 1],
-        duration: 0.5,
-        ease: "power2.out"
-      }, entryLabel);
-    }
-  });
+  if (i > 0) {
+    const prevCard = cards[i - 1];
+    
+    // Start tilting previous card slightly EARLIER than current card enters
+    tl.to(prevCard, {
+      rotateZ: finalTilt[i - 1],
+      duration: 0.8,
+      ease: "power3.out"
+    }, `>-0.6`); // <<< Tilt starts *just* before the new card enters
+  }
+});
+
 </script>
 
 </body>
