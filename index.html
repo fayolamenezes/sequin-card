@@ -195,8 +195,8 @@
   const cards = document.querySelectorAll('.card');
   const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
-  const entryTilt = isMobile ? [8, -6, 5, 0] : [11, -10, 7, 0];
-  const finalTilt = isMobile ? [17, -11, 10, 0] : [18, -16, 10, 0];
+  const entryTilt = isMobile ? [8, -6, 5, 0] : [8, -6, 5, 0];
+  const finalTilt = isMobile ? [17, -11, 10, 0] : [17, -11, 10, 0];
 
   gsap.set(cards, {
     yPercent: isMobile ? 200 : 170,
@@ -211,7 +211,7 @@
       trigger: "#card-section",
       start: "top top",
       end: isMobile ? "+=3000" : "+=4500",
-      scrub: 1,
+      scrub: 0.5,
       pin: true,
       anticipatePin: 1
     }
@@ -225,16 +225,16 @@
       scale: 1,
       rotateZ: isLast ? 0 : entryTilt[i],
       z: i * (isMobile ? 5 : 10),
-      ease: isMobile ? "power3.out" : "expo.out",
+      ease: isMobile ? "none" : "expo.out",
       duration: 1,
       onStart: () => card.style.zIndex = 20 + i
-    }, i === 0 ? 0 : `<+=0.5`);
+    }, i === 0 ? 0 : `<+=0.6`);
 
     if (i > 0) {
       const prevCard = cards[i - 1];
       tl.to(prevCard, {
         rotateZ: finalTilt[i - 1],
-        ease: "power3.out",
+        ease: "none",
         duration: 0.8
       }, `<+=0.2`);
     }
